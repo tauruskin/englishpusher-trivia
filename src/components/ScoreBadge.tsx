@@ -4,10 +4,8 @@ interface ScoreBadgeProps {
 }
 
 const ScoreBadge = ({ score, total }: ScoreBadgeProps) => (
-  <div className="flex items-center gap-2 bg-secondary px-4 py-2 rounded-lg font-display">
-    <span className="text-muted-foreground text-sm">Score</span>
-    <span className="text-primary font-bold text-lg">{score}</span>
-    <span className="text-muted-foreground text-sm">/ {total}</span>
+  <div className="flex items-center gap-1.5 bg-secondary px-2.5 py-1.5 rounded-lg font-display whitespace-nowrap">
+    <span className="text-primary font-bold text-sm">{score}/{total}</span>
   </div>
 );
 

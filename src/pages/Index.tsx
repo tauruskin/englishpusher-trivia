@@ -89,14 +89,9 @@ const Index = () => {
               <h1 className="font-display text-lg font-bold text-foreground tracking-tight">
                 Englishpusher<span className="text-primary"> Trivia</span>
               </h1>
-              <a
-                href="https://www.englishpusher.in.ua/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-muted-foreground hover:text-primary transition-colors"
-              >
-                🌐 Englishpusher.in.ua
-              </a>
+              <p className="text-xs text-muted-foreground">
+                Adjectives for Feelings
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
