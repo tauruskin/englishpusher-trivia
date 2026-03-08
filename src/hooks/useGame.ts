@@ -71,6 +71,12 @@ export function useGame(questionCount = 10) {
         setStreak(0);
       }
 
+      // Determine delay based on question type and correctness
+      const isFillBlank = currentQuestion.type === "fill-blank";
+      const feedbackDelay = isFillBlank
+        ? correct ? 2000 : 4000  // fill-blank: 2s correct, 4s wrong (1s wrong + 3s corrected)
+        : 1000; // multiple choice: 1s
+
       setTimeout(() => {
         setTransitioning(true);
         setTimeout(() => {
@@ -84,7 +90,7 @@ export function useGame(questionCount = 10) {
           setIsCorrect(null);
           setTransitioning(false);
         }, 300);
-      }, 1000);
+      }, feedbackDelay);
     },
     [answered, currentQuestion, currentIndex, questions.length]
   );

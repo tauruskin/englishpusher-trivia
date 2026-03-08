@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Question } from "@/hooks/useGame";
 import GameCharacter, { CharacterPose } from "@/components/GameCharacter";
 
@@ -14,6 +14,16 @@ interface QuestionCardProps {
 
 const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, transitioning, onSubmit }: QuestionCardProps) => {
   const [inputValue, setInputValue] = useState("");
+  const [showCorrectedAnswer, setShowCorrectedAnswer] = useState(false);
+
+  // For fill-blank wrong answers: after 1s, swap to correct answer
+  useEffect(() => {
+    if (answered && question.type === "fill-blank" && isCorrect === false) {
+      const timer = setTimeout(() => setShowCorrectedAnswer(true), 1000);
+      return () => clearTimeout(timer);
+    }
+    setShowCorrectedAnswer(false);
+  }, [answered, question.type, isCorrect]);
 
   const getPrompt = () => {
     switch (question.type) {
@@ -41,11 +51,39 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && inputValue.trim() && !answered) {
       onSubmit(inputValue.trim());
-      setInputValue("");
+    }
+  };
+
+  const handleSubmitFillBlank = () => {
+    if (inputValue.trim() && !answered) {
+      onSubmit(inputValue.trim());
     }
   };
 
   const characterPose: CharacterPose = !answered ? "thinking" : isCorrect ? "happy" : "sad";
+
+  // Render the fill-blank sentence with the answer inserted into the blank
+  const renderFilledSentence = () => {
+    const sentence = question.word.example;
+    const parts = sentence.split("___");
+    
+    const displayWord = showCorrectedAnswer ? question.correctAnswer : (selectedAnswer || "");
+    const colorClass = showCorrectedAnswer
+      ? "text-success transition-all duration-500"
+      : isCorrect
+        ? "text-success animate-bounce-once"
+        : "text-destructive animate-shake";
+
+    return (
+      <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
+        {parts[0]}
+        <span className={`inline-block px-1 border-b-2 ${showCorrectedAnswer ? 'border-success' : isCorrect ? 'border-success' : 'border-destructive'} ${colorClass} font-bold`}>
+          {displayWord}
+        </span>
+        {parts[1]}
+      </h2>
+    );
+  };
 
   return (
     <div className="flex items-center gap-6 w-full">
@@ -79,36 +117,36 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
 
       {/* Main word/sentence */}
       <div className="text-center">
-        <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
-          {getDisplayWord()}
-        </h2>
+        {question.type === "fill-blank" && answered ? (
+          renderFilledSentence()
+        ) : (
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
+            {getDisplayWord()}
+          </h2>
+        )}
       </div>
 
       {/* Options or Input */}
       {question.type === "fill-blank" ? (
         <div className="space-y-3">
-          <input
-            type="text"
-            value={answered ? "" : inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            disabled={answered}
-            placeholder="Type the missing word..."
-            className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary font-body disabled:opacity-50"
-            autoFocus
-          />
           {!answered && (
-            <button
-              onClick={() => { if (inputValue.trim()) { onSubmit(inputValue.trim()); setInputValue(""); } }}
-              className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-display font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all"
-            >
-              Submit
-            </button>
-          )}
-          {answered && (
-            <div className={`text-center py-3 rounded-lg font-display font-semibold ${isCorrect ? "text-success" : "text-destructive"}`}>
-              {isCorrect ? "Correct! ✓" : `Wrong — the answer is "${question.correctAnswer}"`}
-            </div>
+            <>
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Type the missing word..."
+                className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary font-body"
+                autoFocus
+              />
+              <button
+                onClick={handleSubmitFillBlank}
+                className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-display font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              >
+                Submit
+              </button>
+            </>
           )}
         </div>
       ) : (
