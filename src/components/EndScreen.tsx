@@ -13,7 +13,7 @@ const EndScreen = ({ score, total, onRestart }: EndScreenProps) => {
     <div className="w-full max-w-md mx-auto text-center space-y-8 animate-in fade-in duration-500">
       <div className="text-6xl">{emoji}</div>
       <h2 className="font-display text-3xl font-bold text-foreground">{message}</h2>
-      <div className="bg-card rounded-2xl p-8 border border-border space-y-4">
+      <div className="bg-card rounded-2xl p-8 border border-border shadow-md space-y-4">
         <div className="text-5xl font-display font-bold text-primary">{pct}%</div>
         <p className="text-muted-foreground">
           You got <span className="text-foreground font-semibold">{score}</span> out of{" "}

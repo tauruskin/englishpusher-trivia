@@ -49,7 +49,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, onSubmit 
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto space-y-6 animate-in fade-in duration-300">
+    <div className="w-full max-w-lg mx-auto space-y-6 animate-in fade-in duration-300 bg-card rounded-2xl p-8 border border-border shadow-md">
       {/* Type label */}
       <div className="flex justify-center">
         <span className="text-xs uppercase tracking-widest text-accent font-display font-semibold">
