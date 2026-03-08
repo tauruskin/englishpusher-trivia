@@ -227,9 +227,10 @@ const MatchingCard = ({ question, transitioning, onSubmit, speak }: MatchingCard
                 >
                   <div
                     onClick={() => handleWordClick(w.word)}
-                    className={`px-3 py-2.5 rounded-lg border-2 font-body text-sm md:text-base text-center transition-all duration-200 select-none ${getWordStyle(w.word)}`}
+                    className={`px-3 py-2.5 rounded-lg border-2 font-body text-sm md:text-base text-center transition-all duration-200 select-none flex items-center justify-center gap-1 ${getWordStyle(w.word)}`}
                   >
                     {w.word}
+                    {!correctPairs.has(w.word) && <SpeakerButton word={w.word} onSpeak={speak} className="w-6 h-6 text-xs" />}
                   </div>
                 </DraggableWord>
               ))}
