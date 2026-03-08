@@ -126,6 +126,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 };
