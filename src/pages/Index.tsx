@@ -78,16 +78,25 @@ const Index = () => {
       <header className="border-b border-border px-6 py-4 bg-card shadow-sm">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img
-              src={`${import.meta.env.BASE_URL}logo.png`}
-              alt="EnglishPusher Logo"
-              className="h-10 w-auto"
-            />
+            <a href="https://www.englishpusher.in.ua/" target="_blank" rel="noopener noreferrer">
+              <img
+                src={`${import.meta.env.BASE_URL}logo.png`}
+                alt="EnglishPusher Logo"
+                className="h-10 w-auto"
+              />
+            </a>
             <div>
               <h1 className="font-display text-lg font-bold text-foreground tracking-tight">
                 EnglishPusher<span className="text-primary"> Trivia</span>
               </h1>
-              <p className="text-xs text-muted-foreground">Test your English vocabulary! 🚀</p>
+              <a
+                href="https://www.englishpusher.in.ua/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-muted-foreground hover:text-primary transition-colors"
+              >
+                🌐 EnglishPusher.in.ua
+              </a>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -131,6 +140,20 @@ const Index = () => {
           )}
         </div>
       </main>
+
+      <footer className="border-t border-border px-6 py-4 bg-card">
+        <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+          <p>Copyright © 2026 — Developed by Tetiana Pushkar</p>
+          <a
+            href="https://www.englishpusher.in.ua/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary transition-colors"
+          >
+            Visit EnglishPusher.in.ua →
+          </a>
+        </div>
+      </footer>
     </div>
   );
 };
