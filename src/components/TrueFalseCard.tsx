@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Question } from "@/hooks/useGame";
 import GameCharacter, { CharacterPose } from "@/components/GameCharacter";
+import SpeakerButton from "@/components/SpeakerButton";
 
 interface TrueFalseCardProps {
   question: Question;
@@ -9,6 +11,8 @@ interface TrueFalseCardProps {
   streak: number;
   transitioning: boolean;
   onSubmit: (answer: string) => void;
+  speak: (word: string) => void;
+  speakIfInteracted: (word: string) => void;
 }
 
 const TrueFalseCard = ({
@@ -19,8 +23,16 @@ const TrueFalseCard = ({
   streak,
   transitioning,
   onSubmit,
+  speak,
+  speakIfInteracted,
 }: TrueFalseCardProps) => {
   const characterPose: CharacterPose = !answered ? "thinking" : isCorrect ? "happy" : "sad";
+
+  // Auto-pronounce on new question
+  useEffect(() => {
+    const timer = setTimeout(() => speakIfInteracted(question.word.word), 500);
+    return () => clearTimeout(timer);
+  }, [question.word.word, speakIfInteracted]);
 
   const getBtnStyle = (value: string) => {
     if (!answered) {
@@ -77,9 +89,12 @@ const TrueFalseCard = ({
 
         {/* English word */}
         <div className="text-center">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-            {question.word.word}
-          </h2>
+          <div className="flex items-center justify-center gap-1">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
+              {question.word.word}
+            </h2>
+            <SpeakerButton word={question.word.word} onSpeak={speak} />
+          </div>
           <p className="text-lg text-muted-foreground mt-2">= {question.shownTranslation}</p>
         </div>
 

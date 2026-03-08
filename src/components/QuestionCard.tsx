@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Question } from "@/hooks/useGame";
 import GameCharacter, { CharacterPose } from "@/components/GameCharacter";
+import SpeakerButton from "@/components/SpeakerButton";
 
 interface QuestionCardProps {
   question: Question;
@@ -10,11 +11,19 @@ interface QuestionCardProps {
   streak: number;
   transitioning: boolean;
   onSubmit: (answer: string) => void;
+  speak: (word: string) => void;
+  speakIfInteracted: (word: string) => void;
 }
 
-const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, transitioning, onSubmit }: QuestionCardProps) => {
+const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, transitioning, onSubmit, speak, speakIfInteracted }: QuestionCardProps) => {
   const [inputValue, setInputValue] = useState("");
   const [showCorrectedAnswer, setShowCorrectedAnswer] = useState(false);
+
+  // Auto-pronounce on new question
+  useEffect(() => {
+    const timer = setTimeout(() => speakIfInteracted(question.word.word), 500);
+    return () => clearTimeout(timer);
+  }, [question.word.word, speakIfInteracted]);
 
   // For fill-blank wrong answers: after 1s, swap to correct answer
   useEffect(() => {
@@ -85,6 +94,9 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
     );
   };
 
+  // Determine if we should show the speaker next to the English word
+  const showSpeakerInline = question.type === "en-to-native" || question.type === "fill-blank";
+
   return (
     <div className="flex items-center gap-6 w-full">
       <GameCharacter pose={characterPose} className="flex-shrink-0" />
@@ -120,9 +132,17 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
         {question.type === "fill-blank" && answered ? (
           renderFilledSentence()
         ) : (
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
-            {getDisplayWord()}
-          </h2>
+          <div className="flex items-center justify-center gap-1">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
+              {getDisplayWord()}
+            </h2>
+            {showSpeakerInline && (
+              <SpeakerButton word={question.word.word} onSpeak={speak} />
+            )}
+            {question.type === "native-to-en" && (
+              <SpeakerButton word={question.correctAnswer} onSpeak={speak} />
+            )}
+          </div>
         )}
       </div>
 

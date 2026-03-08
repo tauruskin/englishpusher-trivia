@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useGame } from "@/hooks/useGame";
+import { useTTS } from "@/hooks/useTTS";
 import { WordEntry } from "@/data/wordList";
 import ProgressBar from "@/components/ProgressBar";
 import ScoreBadge from "@/components/ScoreBadge";
@@ -11,6 +12,7 @@ import EndScreen from "@/components/EndScreen";
 const Index = () => {
   const [customPool, setCustomPool] = useState<WordEntry[] | undefined>();
   const game = useGame(customPool);
+  const tts = useTTS();
 
   const handlePracticeWeak = (words: WordEntry[]) => {
     setCustomPool(words);
@@ -36,6 +38,8 @@ const Index = () => {
           streak={game.streak}
           transitioning={game.transitioning}
           onSubmit={game.submitAnswer}
+          speak={tts.speak}
+          speakIfInteracted={tts.speakIfInteracted}
         />
       );
     }
@@ -47,6 +51,8 @@ const Index = () => {
           question={game.currentQuestion}
           transitioning={game.transitioning}
           onSubmit={game.submitAnswer}
+          speak={tts.speak}
+          speakIfInteracted={tts.speakIfInteracted}
         />
       );
     }
@@ -61,6 +67,8 @@ const Index = () => {
         streak={game.streak}
         transitioning={game.transitioning}
         onSubmit={game.submitAnswer}
+        speak={tts.speak}
+        speakIfInteracted={tts.speakIfInteracted}
       />
     );
   };
@@ -82,16 +90,26 @@ const Index = () => {
               <p className="text-xs text-muted-foreground">Test your English vocabulary! 🚀</p>
             </div>
           </div>
-          {!game.gameOver && (
-            <div className="flex items-center gap-3">
-              {game.streak >= 3 && (
-                <span className="text-sm font-display font-bold text-primary animate-pulse">
-                  🔥 {game.streak}
-                </span>
-              )}
-              <ScoreBadge score={game.score} total={game.currentIndex + (game.answered ? 1 : 0)} />
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={tts.toggleMute}
+              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors text-lg"
+              aria-label={tts.muted ? "Unmute pronunciation" : "Mute pronunciation"}
+              title={tts.muted ? "Unmute" : "Mute"}
+            >
+              {tts.muted ? "🔇" : "🔊"}
+            </button>
+            {!game.gameOver && (
+              <>
+                {game.streak >= 3 && (
+                  <span className="text-sm font-display font-bold text-primary animate-pulse">
+                    🔥 {game.streak}
+                  </span>
+                )}
+                <ScoreBadge score={game.score} total={game.currentIndex + (game.answered ? 1 : 0)} />
+              </>
+            )}
+          </div>
         </div>
       </header>
 
