@@ -12,6 +12,7 @@ import {
 } from "@dnd-kit/core";
 import { Question } from "@/hooks/useGame";
 import GameCharacter, { CharacterPose } from "@/components/GameCharacter";
+import SpeakerButton from "@/components/SpeakerButton";
 
 /* ── helpers ────────────────────────────────────── */
 function shuffle<T>(arr: T[]): T[] {
