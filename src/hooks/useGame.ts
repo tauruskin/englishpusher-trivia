@@ -55,7 +55,7 @@ export interface AnswerResult {
 const configToType: Record<string, QuestionType> = {
   multipleChoice: "en-to-native",
   reversed: "native-to-en",
-  fillBlank: "fill-blank",
+  typeTheWord: "type-word",
   trueOrFalse: "true-false",
   matching: "matching",
 };
@@ -63,7 +63,7 @@ const configToType: Record<string, QuestionType> = {
 export const questionTypeLabel: Record<QuestionType, string> = {
   "en-to-native": "Multiple choice",
   "native-to-en": "Reverse multiple choice",
-  "fill-blank": "Fill in the blank",
+  "type-word": "Type the word",
   "true-false": "True or False",
   "matching": "Match the pair",
 };
