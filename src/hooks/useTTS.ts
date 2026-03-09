@@ -16,16 +16,27 @@ export function useTTS() {
     };
   }, []);
 
+  const getPreferredVoice = useCallback(() => {
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = ["Daniel", "Karen", "Samantha"];
+    for (const name of preferred) {
+      const match = voices.find((v) => v.name.includes(name) && v.lang.startsWith("en"));
+      if (match) return match;
+    }
+    return voices.find((v) => v.lang.startsWith("en-US")) || voices.find((v) => v.lang.startsWith("en")) || null;
+  }, []);
+
   const speak = useCallback((word: string) => {
     if (muted || !window.speechSynthesis) return;
-    // Cancel any ongoing speech
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(word);
     utterance.lang = "en-US";
-    utterance.rate = 0.9;
+    utterance.rate = 0.85;
+    const voice = getPreferredVoice();
+    if (voice) utterance.voice = voice;
     utteranceRef.current = utterance;
     window.speechSynthesis.speak(utterance);
-  }, [muted]);
+  }, [muted, getPreferredVoice]);
 
   const speakIfInteracted = useCallback((word: string) => {
     if (hasInteracted.current) {
