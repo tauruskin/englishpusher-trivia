@@ -10,20 +10,20 @@ export interface WordEntry {
   translation: string;
 }
 
-export type EnabledQuestionType = 'multipleChoice' | 'reversed' | 'fillBlank' | 'trueOrFalse' | 'matching';
+export type EnabledQuestionType = 'multipleChoice' | 'reversed' | 'typeTheWord' | 'trueOrFalse' | 'matching';
 
 /**
  * Toggle question types on/off per lesson.
  * - multipleChoice: English word → pick Ukrainian translation
  * - reversed: Ukrainian translation → pick English word
- * - fillBlank: Fill in the blank in an example sentence
+ * - typeTheWord: Ukrainian translation → type the English word
  * - trueOrFalse: Is this English–Ukrainian pair correct?
- * - matching: Drag-and-drop 5 English words to their Ukrainian translations
+ * - matching: Click-to-match 5 English words to their Ukrainian translations
  */
 export const enabledQuestionTypes: EnabledQuestionType[] = [
   'multipleChoice',
   'reversed',
-  'fillBlank',
+  'typeTheWord',
   'trueOrFalse',
   'matching',
 ];
