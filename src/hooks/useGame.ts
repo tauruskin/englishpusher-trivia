@@ -35,7 +35,7 @@ function clearProgress() {
   } catch {}
 }
 
-export type QuestionType = "en-to-native" | "native-to-en" | "fill-blank" | "true-false" | "matching";
+export type QuestionType = "en-to-native" | "native-to-en" | "type-word" | "true-false" | "matching";
 
 export interface Question {
   type: QuestionType;
@@ -55,7 +55,7 @@ export interface AnswerResult {
 const configToType: Record<string, QuestionType> = {
   multipleChoice: "en-to-native",
   reversed: "native-to-en",
-  fillBlank: "fill-blank",
+  typeTheWord: "type-word",
   trueOrFalse: "true-false",
   matching: "matching",
 };
@@ -63,7 +63,7 @@ const configToType: Record<string, QuestionType> = {
 export const questionTypeLabel: Record<QuestionType, string> = {
   "en-to-native": "Multiple choice",
   "native-to-en": "Reverse multiple choice",
-  "fill-blank": "Fill in the blank",
+  "type-word": "Type the word",
   "true-false": "True or False",
   "matching": "Match the pair",
 };
@@ -78,7 +78,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 function buildSingleQuestion(word: WordEntry, type: QuestionType, pool: WordEntry[]): Question {
-  if (type === "fill-blank") {
+  if (type === "type-word") {
     return { type, word, correctAnswer: word.word };
   }
 
@@ -210,11 +210,11 @@ export function useGame(customPool?: WordEntry[]) {
       }
 
       const isMatching = currentQuestion.type === "matching";
-      const isFillBlank = currentQuestion.type === "fill-blank";
+      const isTypeWord = currentQuestion.type === "type-word";
       const feedbackDelay = isMatching
         ? 300
-        : isFillBlank
-          ? correct ? 2000 : 4000
+        : isTypeWord
+          ? correct ? 2000 : 3000
           : 1000;
 
       setTimeout(() => {

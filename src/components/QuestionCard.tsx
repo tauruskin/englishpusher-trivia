@@ -17,7 +17,6 @@ interface QuestionCardProps {
 
 const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, transitioning, onSubmit, speak, speakIfInteracted }: QuestionCardProps) => {
   const [inputValue, setInputValue] = useState("");
-  const [showCorrectedAnswer, setShowCorrectedAnswer] = useState(false);
 
   // Auto-pronounce only when English word is the displayed question
   useEffect(() => {
@@ -27,20 +26,11 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
     }
   }, [question.word.word, question.type, speakIfInteracted]);
 
-  // For fill-blank wrong answers: after 1s, swap to correct answer
-  useEffect(() => {
-    if (answered && question.type === "fill-blank" && isCorrect === false) {
-      const timer = setTimeout(() => setShowCorrectedAnswer(true), 1000);
-      return () => clearTimeout(timer);
-    }
-    setShowCorrectedAnswer(false);
-  }, [answered, question.type, isCorrect]);
-
   const getPrompt = () => {
     switch (question.type) {
       case "en-to-native": return "What does this word mean?";
       case "native-to-en": return "Which English word matches?";
-      case "fill-blank": return "Fill in the blank:";
+      case "type-word": return "Type the English word:";
     }
   };
 
@@ -48,7 +38,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
     switch (question.type) {
       case "en-to-native": return question.word.word;
       case "native-to-en": return question.word.translation;
-      case "fill-blank": return question.word.example;
+      case "type-word": return question.word.translation;
     }
   };
 
@@ -65,7 +55,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
     }
   };
 
-  const handleSubmitFillBlank = () => {
+  const handleSubmitTypeWord = () => {
     if (inputValue.trim() && !answered) {
       onSubmit(inputValue.trim());
     }
@@ -73,31 +63,8 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
 
   const characterPose: CharacterPose = !answered ? "thinking" : isCorrect ? "happy" : "sad";
 
-  // Render the fill-blank sentence with the answer inserted into the blank
-  const renderFilledSentence = () => {
-    const sentence = question.word.example;
-    const parts = sentence.split("___");
-    
-    const displayWord = showCorrectedAnswer ? question.correctAnswer : (selectedAnswer || "");
-    const colorClass = showCorrectedAnswer
-      ? "text-success transition-all duration-500"
-      : isCorrect
-        ? "text-success animate-bounce-once"
-        : "text-destructive animate-shake";
-
-    return (
-      <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
-        {parts[0]}
-        <span className={`inline-block px-1 border-b-2 ${showCorrectedAnswer ? 'border-success' : isCorrect ? 'border-success' : 'border-destructive'} ${colorClass} font-bold`}>
-          {displayWord}
-        </span>
-        {parts[1]}
-      </h2>
-    );
-  };
-
   // Determine if we should show the speaker next to the English word
-  const showSpeakerInline = question.type === "en-to-native" || question.type === "fill-blank";
+  const showSpeakerInline = question.type === "en-to-native";
 
   return (
     <div className="flex items-center gap-6 w-full">
@@ -122,53 +89,66 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
       {/* Type label */}
       <div className="flex justify-center">
         <span className="text-xs uppercase tracking-widest text-accent font-display font-semibold">
-          {question.type === "fill-blank" ? "Fill in the Blank" : "Multiple Choice"}
+          {question.type === "type-word" ? "Type the Word" : "Multiple Choice"}
         </span>
       </div>
 
       {/* Prompt */}
       <p className="text-muted-foreground text-center text-sm">{getPrompt()}</p>
 
-      {/* Main word/sentence */}
+      {/* Main word */}
       <div className="text-center">
-        {question.type === "fill-blank" && answered ? (
-          renderFilledSentence()
-        ) : (
-          <div className="flex items-center justify-center gap-1">
-            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
-              {getDisplayWord()}
-            </h2>
-            {showSpeakerInline && (
-              <SpeakerButton word={question.word.word} onSpeak={speak} />
-            )}
-            {question.type === "native-to-en" && (
-              <SpeakerButton word={question.correctAnswer} onSpeak={speak} />
-            )}
-          </div>
-        )}
+        <div className="flex items-center justify-center gap-1">
+          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
+            {getDisplayWord()}
+          </h2>
+          {showSpeakerInline && (
+            <SpeakerButton word={question.word.word} onSpeak={speak} />
+          )}
+          {(question.type === "native-to-en" || question.type === "type-word") && (
+            <SpeakerButton word={question.correctAnswer} onSpeak={speak} />
+          )}
+        </div>
       </div>
 
       {/* Options or Input */}
-      {question.type === "fill-blank" ? (
+      {question.type === "type-word" ? (
         <div className="space-y-3">
-          {!answered && (
+          {!answered ? (
             <>
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Type the missing word..."
+                placeholder="Type the English word..."
                 className="w-full px-4 py-3 rounded-lg bg-secondary border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary font-body"
                 autoFocus
               />
               <button
-                onClick={handleSubmitFillBlank}
+                onClick={handleSubmitTypeWord}
                 className="w-full py-3 rounded-lg bg-primary text-primary-foreground font-display font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 Submit
               </button>
             </>
+          ) : (
+            <div className="text-center space-y-2">
+              {isCorrect ? (
+                <p className="text-lg font-bold text-success animate-bounce-once">
+                  ✅ {question.correctAnswer}
+                </p>
+              ) : (
+                <>
+                  <p className="text-lg font-bold text-destructive animate-shake">
+                    ❌ {selectedAnswer}
+                  </p>
+                  <p className="text-lg font-bold text-success">
+                    Correct: {question.correctAnswer}
+                  </p>
+                </>
+              )}
+            </div>
           )}
         </div>
       ) : (
