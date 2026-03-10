@@ -32,6 +32,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
       case "en-to-native": return "What does this word mean?";
       case "native-to-en": return "Which English word matches?";
       case "type-word": return "Type the English word:";
+      case "sentence-completion": return "Fill in the missing word:";
     }
   };
 
