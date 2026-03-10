@@ -7,9 +7,10 @@
 export interface WordEntry {
   word: string;
   translation: string;
+  example?: string;
 }
 
-export type EnabledQuestionType = 'multipleChoice' | 'reversed' | 'typeTheWord' | 'trueOrFalse' | 'matching';
+export type EnabledQuestionType = 'multipleChoice' | 'reversed' | 'typeTheWord' | 'trueOrFalse' | 'matching' | 'sentenceCompletion';
 
 /**
  * Toggle question types on/off per lesson.
