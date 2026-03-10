@@ -101,19 +101,34 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
       {/* Prompt */}
       <p className="text-muted-foreground text-center text-sm">{getPrompt()}</p>
 
-      {/* Main word */}
+      {/* Main word or sentence */}
       <div className="text-center">
-        <div className="flex items-center justify-center gap-1">
-          <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
-            {getDisplayWord()}
-          </h2>
-          {showSpeakerInline && (
-            <SpeakerButton word={question.word.word} onSpeak={speak} />
-          )}
-          {(question.type === "native-to-en" || question.type === "type-word") && (
-            <SpeakerButton word={question.correctAnswer} onSpeak={speak} />
-          )}
-        </div>
+        {isSentenceCompletion && question.sentence ? (
+          <p className="font-body text-lg md:text-xl text-foreground leading-relaxed">
+            {question.sentence.split("___").map((part, idx, arr) => (
+              <span key={idx}>
+                {part}
+                {idx < arr.length - 1 && (
+                  <span className="inline-block mx-1 border-b-2 border-primary min-w-[80px] text-center font-bold text-primary">
+                    {answered ? question.correctAnswer : "___"}
+                  </span>
+                )}
+              </span>
+            ))}
+          </p>
+        ) : (
+          <div className="flex items-center justify-center gap-1">
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
+              {getDisplayWord()}
+            </h2>
+            {showSpeakerInline && (
+              <SpeakerButton word={question.word.word} onSpeak={speak} />
+            )}
+            {showSpeakerForAnswer && (
+              <SpeakerButton word={question.correctAnswer} onSpeak={speak} />
+            )}
+          </div>
+        )}
       </div>
 
       {/* Options or Input */}
