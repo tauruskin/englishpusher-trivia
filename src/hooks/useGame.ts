@@ -114,19 +114,33 @@ function buildSingleQuestion(word: WordEntry, type: QuestionType, pool: WordEntr
 
 function generateQuestions(pool: WordEntry[]): Question[] {
   const enabledTypes = enabledQuestionTypes.map((t) => configToType[t]).filter(Boolean);
-  const singleTypes = enabledTypes.filter((t) => t !== "matching");
   const matchingEnabled = enabledTypes.includes("matching");
+  const sentenceCompletionEnabled = enabledTypes.includes("sentence-completion");
 
-  // Sentence-completion only works for words that have an example field
-  const sentenceCompletionEnabled = singleTypes.includes("sentence-completion");
-  const singleTypesNoSentence = singleTypes.filter((t) => t !== "sentence-completion");
+  // Question types by difficulty zone
+  const zone1: QuestionType[] = ["matching", "en-to-native"].filter(t => enabledTypes.includes(t));
+  const zone2: QuestionType[] = ["en-to-native", "true-false"].filter(t => enabledTypes.includes(t));
+  const zone3: QuestionType[] = ["true-false", "type-word"].filter(t => enabledTypes.includes(t));
+  const zone4: QuestionType[] = ["type-word", "sentence-completion"].filter(t => enabledTypes.includes(t));
+  const zone5: QuestionType[] = enabledTypes.filter(t => t !== "matching");
 
   const shuffled = shuffle(pool);
+  const total = shuffled.length;
   const questions: Question[] = [];
   let i = 0;
 
   while (i < shuffled.length) {
-    if (matchingEnabled && shuffled.length - i >= 5 && Math.random() < 0.1) {
+    // Calculate which zone this question falls in based on position
+    const progress = i / total;
+    let zoneTypes: QuestionType[];
+    if (progress < 0.2) zoneTypes = zone1;
+    else if (progress < 0.4) zoneTypes = zone2;
+    else if (progress < 0.6) zoneTypes = zone3;
+    else if (progress < 0.8) zoneTypes = zone4;
+    else zoneTypes = zone5;
+
+    // Try matching only in zone1
+    if (matchingEnabled && progress < 0.2 && shuffled.length - i >= 5 && Math.random() < 0.3) {
       const matchWords = shuffled.slice(i, i + 5);
       questions.push({
         type: "matching",
@@ -137,15 +151,12 @@ function generateQuestions(pool: WordEntry[]): Question[] {
       i += 5;
     } else {
       const word = shuffled[i];
-      // Allow sentence-completion only if the word has an example
-      const availableTypes =
-        sentenceCompletionEnabled && word.example
-          ? singleTypes
-          : singleTypesNoSentence;
-      const type =
-        availableTypes.length > 0
-          ? availableTypes[Math.floor(Math.random() * availableTypes.length)]
-          : "en-to-native";
+      // Filter out sentence-completion if word has no example
+      const availableTypes = zoneTypes.filter(t =>
+        t !== "matching" && (t !== "sentence-completion" || (sentenceCompletionEnabled && word.example))
+      );
+      const fallback = availableTypes.length > 0 ? availableTypes : ["en-to-native" as QuestionType];
+      const type = fallback[Math.floor(Math.random() * fallback.length)];
       questions.push(buildSingleQuestion(word, type, pool.length >= 4 ? pool : wordList));
       i++;
     }
