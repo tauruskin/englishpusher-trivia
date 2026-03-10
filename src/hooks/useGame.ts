@@ -35,7 +35,7 @@ function clearProgress() {
   } catch {}
 }
 
-export type QuestionType = "en-to-native" | "native-to-en" | "type-word" | "true-false" | "matching";
+export type QuestionType = "en-to-native" | "native-to-en" | "type-word" | "true-false" | "matching" | "sentence-completion";
 
 export interface Question {
   type: QuestionType;
