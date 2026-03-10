@@ -116,19 +116,24 @@ function generateQuestions(pool: WordEntry[]): Question[] {
   const shuffled = shuffle(pool);
   const questions: Question[] = [];
 
-  // Take first 5 words for matching
-  const matchWords = shuffled.slice(0, 5);
-  questions.push({
-    type: "matching",
-    word: matchWords[0],
-    words: matchWords,
-    correctAnswer: "matched",
-  });
+  // Calculate how many matching cards (10% of words, in groups of 5)
+  const matchingWordCount = Math.floor(pool.length * 0.1 / 5) * 5;
+  const matchingWords = shuffled.slice(0, matchingWordCount);
+  const remaining = shuffled.slice(matchingWordCount);
 
-  // Remaining words divided into 4 equal zones
-  const remaining = shuffled.slice(5);
+  // Create matching cards (1 card per 5 words)
+  for (let i = 0; i < matchingWords.length; i += 5) {
+    const group = matchingWords.slice(i, i + 5);
+    questions.push({
+      type: "matching",
+      word: group[0],
+      words: group,
+      correctAnswer: "matched",
+    });
+  }
+
+  // Divide remaining words into 4 equal zones
   const zoneSize = Math.ceil(remaining.length / 4);
-
   remaining.forEach((word, idx) => {
     const zone = Math.floor(idx / zoneSize);
     let type: QuestionType;
