@@ -24,6 +24,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, t
       const timer = setTimeout(() => speakIfInteracted(question.word.word), 500);
       return () => clearTimeout(timer);
     }
+    // Do NOT auto-pronounce for sentence-completion
   }, [question.word.word, question.type, speakIfInteracted]);
 
   const getPrompt = () => {
