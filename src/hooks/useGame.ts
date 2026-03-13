@@ -165,10 +165,10 @@ export function useGame(pool: WordEntry[]) {
   useEffect(() => {
     if (gameOver) {
       clearProgress();
-    } else if (questions.length > 0 && !customPool) {
+    } else if (questions.length > 0) {
       saveProgress({ questions, currentIndex, score, streak, results });
     }
-  }, [questions, currentIndex, score, streak, results, gameOver, customPool]);
+  }, [questions, currentIndex, score, streak, results, gameOver]);
 
   const submitAnswer = useCallback(
     (answer: string) => {
