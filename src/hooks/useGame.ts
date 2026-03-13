@@ -113,7 +113,7 @@ function generateQuestions(pool: WordEntry[]): Question[] {
   return questions;
 }
 
-export function useGame(pool: WordEntry[]) {
+export function useGame(pool: WordEntry[], topicId?: string) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
@@ -137,7 +137,7 @@ export function useGame(pool: WordEntry[]) {
     setStreak(0);
     setTransitioning(false);
     setResults([]);
-  }, [pool]);
+  }, [topicId]);
   
   const currentQuestion = questions[currentIndex] ?? null;
 
