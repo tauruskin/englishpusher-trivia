@@ -83,7 +83,7 @@ function generateQuestions(pool: WordEntry[]): Question[] {
   const questions: Question[] = [];
 
   // Calculate how many matching cards (10% of words, in groups of 5)
-  const matchingWordCount = Math.max(5, Math.floor(pool.length * 0.1 / 5) * 5);
+  const matchingWordCount = Math.max(5, Math.round(pool.length * 0.15 / 5) * 5);
   const matchingWords = shuffled.slice(0, matchingWordCount);
   const remaining = shuffled.slice(matchingWordCount);
 
