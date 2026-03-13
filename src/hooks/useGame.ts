@@ -1,39 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { WordEntry } from "@/data/wordList";
-
-const STORAGE_KEY = "englishpusher-game-progress-v3";
-
-interface SavedProgress {
-  questions: Question[];
-  currentIndex: number;
-  score: number;
-  streak: number;
-  results: AnswerResult[];
-}
-
-function saveProgress(data: SavedProgress) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {}
-}
-
-function loadProgress(): SavedProgress | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw) as SavedProgress;
-    if (data.questions?.length && data.currentIndex < data.questions.length) return data;
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-function clearProgress() {
-  try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch {}
-}
 
 export type QuestionType = "en-to-native" | "native-to-en" | "type-word" | "true-false" | "matching" | "sentence-completion";
 
@@ -162,13 +128,6 @@ export function useGame(pool: WordEntry[]) {
   const currentQuestion = questions[currentIndex] ?? null;
 
   // Save progress whenever relevant state changes
-  useEffect(() => {
-    if (gameOver) {
-      clearProgress();
-    } else if (questions.length > 0) {
-      saveProgress({ questions, currentIndex, score, streak, results });
-    }
-  }, [questions, currentIndex, score, streak, results, gameOver]);
 
   const submitAnswer = useCallback(
     (answer: string) => {
@@ -231,7 +190,6 @@ export function useGame(pool: WordEntry[]) {
   );
 
   const restart = useCallback((newPool?: WordEntry[]) => {
-    clearProgress();
     const p = newPool ?? pool;
     setQuestions(generateQuestions(p));
     setCurrentIndex(0);
