@@ -147,24 +147,10 @@ function generateQuestions(pool: WordEntry[]): Question[] {
   return questions;
 }
 
-export function useGame(customPool?: WordEntry[]) {
-  const pool = customPool ?? wordList;
-
-  const [questions, setQuestions] = useState<Question[]>(() => {
-    if (!customPool) {
-      const saved = loadProgress();
-      if (saved) return saved.questions;
-    }
-    return generateQuestions(pool);
-  });
-  const [currentIndex, setCurrentIndex] = useState(() => {
-    if (!customPool) { const s = loadProgress(); if (s) return s.currentIndex; }
-    return 0;
-  });
-  const [score, setScore] = useState(() => {
-    if (!customPool) { const s = loadProgress(); if (s) return s.score; }
-    return 0;
-  });
+export function useGame(pool: WordEntry[]) {
+  const [questions, setQuestions] = useState<Question[]>(() => generateQuestions(pool));
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
