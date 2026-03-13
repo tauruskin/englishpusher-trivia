@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { WordEntry } from "@/data/wordList";
 
 export type QuestionType = "en-to-native" | "native-to-en" | "type-word" | "true-false" | "matching" | "sentence-completion";
@@ -127,19 +127,18 @@ export function useGame(pool: WordEntry[]) {
   const [gameId, setGameId] = useState(0);
   
   useEffect(() => {
-    if (customPool) {
-      setQuestions(generateQuestions(customPool));
-      setCurrentIndex(0);
-      setScore(0);
-      setAnswered(false);
-      setSelectedAnswer(null);
-      setIsCorrect(null);
-      setGameOver(false);
-      setStreak(0);
-      setTransitioning(false);
-      setResults([]);
-    }
-  }, [customPool]);
+    setQuestions(generateQuestions(pool));
+    setCurrentIndex(0);
+    setScore(0);
+    setAnswered(false);
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+    setGameOver(false);
+    setStreak(0);
+    setTransitioning(false);
+    setResults([]);
+  }, [pool]);
+  
   const currentQuestion = questions[currentIndex] ?? null;
 
   // Save progress whenever relevant state changes
