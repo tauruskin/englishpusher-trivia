@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Question } from "@/hooks/useGame";
 import GameCharacter, { CharacterPose } from "@/components/GameCharacter";
 import SpeakerButton from "@/components/SpeakerButton";
+import { BorderRotate } from "@/components/ui/animated-gradient-border";
 
 interface TrueFalseCardProps {
   question: Question;
@@ -50,8 +51,17 @@ const TrueFalseCard = ({
   return (
     <div className="flex items-center gap-6 w-full">
       <GameCharacter pose={characterPose} className="flex-shrink-0" />
-      <div
-        className={`flex-1 w-full max-w-lg mx-auto space-y-6 bg-card rounded-2xl p-8 border border-border shadow-md relative overflow-hidden transition-all duration-300 ${
+      <BorderRotate
+        animationSpeed={answered ? (isCorrect ? 1.5 : 4) : 6}
+        gradientColors={
+          answered
+            ? isCorrect
+              ? { primary: '#1a7040', secondary: '#34b268', accent: '#7dd4a0' }
+              : { primary: '#8b1a1a', secondary: '#d54242', accent: '#e88888' }
+            : { primary: '#c06010', secondary: '#f07c1a', accent: '#fcc870' }
+        }
+        backgroundColor="#ffffff"
+        className={`flex-1 w-full max-w-lg mx-auto space-y-6 rounded-2xl p-8 shadow-md relative overflow-hidden transition-all duration-300 ${
           transitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0 animate-slide-up"
         }`}
       >
@@ -115,7 +125,7 @@ const TrueFalseCard = ({
             ❌ False
           </button>
         </div>
-      </div>
+      </BorderRotate>
     </div>
   );
 };

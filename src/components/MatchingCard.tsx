@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { Question } from "@/hooks/useGame";
 import GameCharacter, { CharacterPose } from "@/components/GameCharacter";
 import SpeakerButton from "@/components/SpeakerButton";
+import { BorderRotate } from "@/components/ui/animated-gradient-border";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -89,8 +90,15 @@ const MatchingCard = ({ question, transitioning, onSubmit, speak }: MatchingCard
   return (
     <div className="flex items-center gap-6 w-full">
       <GameCharacter pose={characterPose} className="flex-shrink-0" />
-      <div
-        className={`flex-1 w-full max-w-2xl mx-auto space-y-5 bg-card rounded-2xl p-6 md:p-8 border border-border shadow-md relative overflow-hidden transition-all duration-300 ${
+      <BorderRotate
+        animationSpeed={allDone ? 1.5 : 6}
+        gradientColors={
+          allDone
+            ? { primary: '#1a7040', secondary: '#34b268', accent: '#7dd4a0' }
+            : { primary: '#c06010', secondary: '#f07c1a', accent: '#fcc870' }
+        }
+        backgroundColor="#ffffff"
+        className={`flex-1 w-full max-w-2xl mx-auto space-y-5 rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden transition-all duration-300 ${
           transitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0 animate-slide-up"
         }`}
       >
@@ -146,7 +154,7 @@ const MatchingCard = ({ question, transitioning, onSubmit, speak }: MatchingCard
             ))}
           </div>
         </div>
-      </div>
+      </BorderRotate>
     </div>
   );
 };
