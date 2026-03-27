@@ -14,6 +14,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 interface MatchingCardProps {
+  isReview?: boolean;
   question: Question;
   transitioning: boolean;
   onSubmit: (answer: string) => void;
@@ -21,7 +22,7 @@ interface MatchingCardProps {
   speakIfInteracted: (word: string) => void;
 }
 
-const MatchingCard = ({ question, transitioning, onSubmit, speak }: MatchingCardProps) => {
+const MatchingCard = ({ question, transitioning, onSubmit, speak, isReview }: MatchingCardProps) => {
   const words = question.words!;
 
   const shuffledTranslations = useMemo(() => shuffle(words.map((w) => w.translation)), [words]);
@@ -102,6 +103,11 @@ const MatchingCard = ({ question, transitioning, onSubmit, speak }: MatchingCard
           transitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0 animate-slide-up"
         }`}
       >
+        {isReview && (
+          <div className="absolute -top-1 -right-1 bg-muted text-muted-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl text-xs font-bold">
+            ← Reviewing
+          </div>
+        )}
         {allDone && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
             <span className="text-7xl animate-emoji-correct">🎉</span>

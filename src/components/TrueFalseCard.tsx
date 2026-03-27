@@ -5,6 +5,7 @@ import SpeakerButton from "@/components/SpeakerButton";
 import { BorderRotate } from "@/components/ui/animated-gradient-border";
 
 interface TrueFalseCardProps {
+  isReview?: boolean;
   question: Question;
   answered: boolean;
   selectedAnswer: string | null;
@@ -22,6 +23,7 @@ const TrueFalseCard = ({
   selectedAnswer,
   isCorrect,
   streak,
+  isReview,
   transitioning,
   onSubmit,
   speak,
@@ -74,8 +76,12 @@ const TrueFalseCard = ({
           </div>
         )}
 
-        {/* Streak badge */}
-        {streak >= 2 && (
+        {/* Reviewing / Streak badge */}
+        {isReview ? (
+          <div className="absolute -top-1 -right-1 bg-muted text-muted-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl text-xs font-bold">
+            ← Reviewing
+          </div>
+        ) : streak >= 2 && (
           <div
             className={`absolute -top-1 -right-1 bg-primary text-primary-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl font-display text-sm font-bold ${
               streak >= 3 ? "animate-pulse" : ""
