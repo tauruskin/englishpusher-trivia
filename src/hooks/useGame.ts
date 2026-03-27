@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { WordEntry } from "@/data/wordList";
 
 export type QuestionType = "en-to-native" | "native-to-en" | "type-word" | "true-false" | "matching" | "sentence-completion";
@@ -116,6 +116,9 @@ function generateQuestions(pool: WordEntry[]): Question[] {
 export function useGame(pool: WordEntry[], topicId?: string) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [viewIndex, setViewIndex] = useState(0);
+  const viewIndexRef = useRef(0);
+  const pendingAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -124,11 +127,18 @@ export function useGame(pool: WordEntry[], topicId?: string) {
   const [streak, setStreak] = useState(0);
   const [transitioning, setTransitioning] = useState(false);
   const [results, setResults] = useState<AnswerResult[]>([]);
+  const [resultsMap, setResultsMap] = useState<Record<number, { userAnswer: string; isCorrect: boolean }>>({});
   const [gameId, setGameId] = useState(0);
-  
+
   useEffect(() => {
+    if (pendingAdvanceRef.current) {
+      clearTimeout(pendingAdvanceRef.current);
+      pendingAdvanceRef.current = null;
+    }
     setQuestions(generateQuestions(pool));
     setCurrentIndex(0);
+    setViewIndex(0);
+    viewIndexRef.current = 0;
     setScore(0);
     setAnswered(false);
     setSelectedAnswer(null);
@@ -137,11 +147,31 @@ export function useGame(pool: WordEntry[], topicId?: string) {
     setStreak(0);
     setTransitioning(false);
     setResults([]);
+    setResultsMap({});
   }, [topicId]);
-  
+
   const currentQuestion = questions[currentIndex] ?? null;
 
-  // Save progress whenever relevant state changes
+  const advanceGame = useCallback((fromIndex: number) => {
+    pendingAdvanceRef.current = null;
+    setTransitioning(true);
+    setTimeout(() => {
+      const nextIdx = fromIndex + 1;
+      if (nextIdx >= questions.length) {
+        setGameOver(true);
+      } else {
+        setCurrentIndex(nextIdx);
+        if (viewIndexRef.current === fromIndex) {
+          setViewIndex(nextIdx);
+          viewIndexRef.current = nextIdx;
+        }
+      }
+      setAnswered(false);
+      setSelectedAnswer(null);
+      setIsCorrect(null);
+      setTransitioning(false);
+    }, 300);
+  }, [questions.length]);
 
   const submitAnswer = useCallback(
     (answer: string) => {
@@ -174,6 +204,8 @@ export function useGame(pool: WordEntry[], topicId?: string) {
         ]);
       }
 
+      setResultsMap((prev) => ({ ...prev, [currentIndex]: { userAnswer: answer, isCorrect: correct } }));
+
       const isMatching = currentQuestion.type === "matching";
       const isTypeWord = currentQuestion.type === "type-word";
       const isSentenceCompletion = currentQuestion.type === "sentence-completion";
@@ -185,28 +217,53 @@ export function useGame(pool: WordEntry[], topicId?: string) {
             ? correct ? 2000 : 4000
             : 1000;
 
-      setTimeout(() => {
-        setTransitioning(true);
-        setTimeout(() => {
-          if (currentIndex + 1 >= questions.length) {
-            setGameOver(true);
-          } else {
-            setCurrentIndex((i) => i + 1);
-          }
-          setAnswered(false);
-          setSelectedAnswer(null);
-          setIsCorrect(null);
-          setTransitioning(false);
-        }, 300);
-      }, feedbackDelay);
+      const timeout = setTimeout(() => advanceGame(currentIndex), feedbackDelay);
+      pendingAdvanceRef.current = timeout;
     },
-    [answered, currentQuestion, currentIndex, questions.length]
+    [answered, currentQuestion, currentIndex, advanceGame]
   );
 
+  const isReviewing = viewIndex < currentIndex;
+  const canGoPrev = viewIndex > 0;
+  const canGoNext = viewIndex <= currentIndex;
+
+  const goPrev = useCallback(() => {
+    if (viewIndex > 0) {
+      const newIdx = viewIndex - 1;
+      setViewIndex(newIdx);
+      viewIndexRef.current = newIdx;
+    }
+  }, [viewIndex]);
+
+  const goNext = useCallback(() => {
+    if (isReviewing) {
+      const newIdx = viewIndex + 1;
+      setViewIndex(newIdx);
+      viewIndexRef.current = newIdx;
+    } else {
+      if (pendingAdvanceRef.current) {
+        clearTimeout(pendingAdvanceRef.current);
+        pendingAdvanceRef.current = null;
+      }
+      advanceGame(currentIndex);
+    }
+  }, [isReviewing, viewIndex, currentIndex, advanceGame]);
+
+  const displayedQuestion = questions[viewIndex] ?? null;
+  const displayedAnswered = isReviewing ? true : answered;
+  const displayedSelectedAnswer = isReviewing ? (resultsMap[viewIndex]?.userAnswer ?? null) : selectedAnswer;
+  const displayedIsCorrect = isReviewing ? (resultsMap[viewIndex]?.isCorrect ?? null) : isCorrect;
+
   const restart = useCallback((newPool?: WordEntry[]) => {
+    if (pendingAdvanceRef.current) {
+      clearTimeout(pendingAdvanceRef.current);
+      pendingAdvanceRef.current = null;
+    }
     const p = newPool ?? pool;
     setQuestions(generateQuestions(p));
     setCurrentIndex(0);
+    setViewIndex(0);
+    viewIndexRef.current = 0;
     setScore(0);
     setAnswered(false);
     setSelectedAnswer(null);
@@ -215,23 +272,34 @@ export function useGame(pool: WordEntry[], topicId?: string) {
     setStreak(0);
     setTransitioning(false);
     setResults([]);
+    setResultsMap({});
     setGameId((id) => id + 1);
   }, [pool]);
 
   return {
     currentQuestion,
+    displayedQuestion,
     currentIndex,
+    viewIndex,
     totalQuestions: questions.length,
     score,
     answered,
     selectedAnswer,
     isCorrect,
+    displayedAnswered,
+    displayedSelectedAnswer,
+    displayedIsCorrect,
+    isReviewing,
+    canGoPrev,
+    canGoNext,
     gameOver,
     streak,
     transitioning,
     results,
     gameId,
     submitAnswer,
+    goPrev,
+    goNext,
     restart,
   };
 }

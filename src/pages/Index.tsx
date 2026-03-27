@@ -51,32 +51,33 @@ const [selectedTopic, setSelectedTopic] = useState<Topic>(getInitialTopic);
   };
 
   const renderQuestion = () => {
-    if (!game.currentQuestion) return null;
+    if (!game.displayedQuestion) return null;
+    const onSubmit = game.isReviewing ? () => {} : game.submitAnswer;
 
-    if (game.currentQuestion.type === "true-false") {
+    if (game.displayedQuestion.type === "true-false") {
       return (
         <TrueFalseCard
-          key={game.currentIndex}
-          question={game.currentQuestion}
-          answered={game.answered}
-          selectedAnswer={game.selectedAnswer}
-          isCorrect={game.isCorrect}
-          streak={game.streak}
+          key={game.viewIndex}
+          question={game.displayedQuestion}
+          answered={game.displayedAnswered}
+          selectedAnswer={game.displayedSelectedAnswer}
+          isCorrect={game.displayedIsCorrect}
+          streak={game.isReviewing ? 0 : game.streak}
           transitioning={game.transitioning}
-          onSubmit={game.submitAnswer}
+          onSubmit={onSubmit}
           speak={tts.speak}
           speakIfInteracted={tts.speakIfInteracted}
         />
       );
     }
 
-    if (game.currentQuestion.type === "matching") {
+    if (game.displayedQuestion.type === "matching") {
       return (
         <MatchingCard
-          key={game.currentIndex}
-          question={game.currentQuestion}
+          key={game.viewIndex}
+          question={game.displayedQuestion}
           transitioning={game.transitioning}
-          onSubmit={game.submitAnswer}
+          onSubmit={onSubmit}
           speak={tts.speak}
           speakIfInteracted={tts.speakIfInteracted}
         />
@@ -85,14 +86,14 @@ const [selectedTopic, setSelectedTopic] = useState<Topic>(getInitialTopic);
 
     return (
       <QuestionCard
-        key={game.currentIndex}
-        question={game.currentQuestion}
-        answered={game.answered}
-        selectedAnswer={game.selectedAnswer}
-        isCorrect={game.isCorrect}
-        streak={game.streak}
+        key={game.viewIndex}
+        question={game.displayedQuestion}
+        answered={game.displayedAnswered}
+        selectedAnswer={game.displayedSelectedAnswer}
+        isCorrect={game.displayedIsCorrect}
+        streak={game.isReviewing ? 0 : game.streak}
         transitioning={game.transitioning}
-        onSubmit={game.submitAnswer}
+        onSubmit={onSubmit}
         speak={tts.speak}
         speakIfInteracted={tts.speakIfInteracted}
       />
@@ -190,7 +191,26 @@ const [selectedTopic, setSelectedTopic] = useState<Topic>(getInitialTopic);
               {game.totalQuestions === 0 ? (
                 <div className="text-center text-muted-foreground">Loading...</div>
               ) : (
-                renderQuestion()
+                <>
+                  {renderQuestion()}
+                  {(game.canGoPrev || game.canGoNext) && (
+                    <div className="flex justify-between items-center px-1">
+                      <button
+                        onClick={game.goPrev}
+                        disabled={!game.canGoPrev}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg font-display text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        ← Back
+                      </button>
+                      <button
+                        onClick={game.goNext}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg font-display text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      >
+                        {game.isReviewing || game.answered ? "Next →" : "Skip →"}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}
