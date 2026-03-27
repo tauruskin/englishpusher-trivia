@@ -225,7 +225,7 @@ export function useGame(pool: WordEntry[], topicId?: string) {
 
   const isReviewing = viewIndex < currentIndex;
   const canGoPrev = viewIndex > 0;
-  const canGoNext = viewIndex <= currentIndex;
+  const canGoNext = isReviewing || (answered && !gameOver);
 
   const goPrev = useCallback(() => {
     if (viewIndex > 0) {

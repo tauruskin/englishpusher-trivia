@@ -198,15 +198,22 @@ const [selectedTopic, setSelectedTopic] = useState<Topic>(getInitialTopic);
                       <button
                         onClick={game.goPrev}
                         disabled={!game.canGoPrev}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg font-display text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className={game.canGoPrev
+                          ? "px-4 py-2 rounded-xl border-2 border-border text-sm font-semibold hover:border-primary hover:text-primary transition-all"
+                          : "px-4 py-2 rounded-xl border-2 border-transparent text-transparent cursor-default text-sm"
+                        }
                       >
                         ← Back
                       </button>
                       <button
                         onClick={game.goNext}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg font-display text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                        disabled={!game.canGoNext}
+                        className={game.canGoNext
+                          ? "px-4 py-2 rounded-xl border-2 border-primary bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-all"
+                          : "px-4 py-2 rounded-xl border-2 border-transparent text-transparent cursor-default text-sm"
+                        }
                       >
-                        {game.isReviewing || game.answered ? "Next →" : "Skip →"}
+                        {game.isReviewing ? "Next →" : "Skip →"}
                       </button>
                     </div>
                   )}
