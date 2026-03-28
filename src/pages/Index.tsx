@@ -265,8 +265,6 @@ const Index = () => {
           <div className="flex items-center gap-4">
             <a
               href="https://app.englishpusher.in.ua/"
-              target="_blank"
-              rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
             >
               ← All Apps
