@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
+import { motion } from "motion/react";
 import { useGame } from "@/hooks/useGame";
 import { useTTS } from "@/hooks/useTTS";
 import { WordEntry } from "@/data/wordList";
@@ -9,36 +10,35 @@ import QuestionCard from "@/components/QuestionCard";
 import TrueFalseCard from "@/components/TrueFalseCard";
 import MatchingCard from "@/components/MatchingCard";
 import EndScreen from "@/components/EndScreen";
+import MenuVertical from "@/components/ui/menu-vertical";
 
 const Index = () => {
-  const getInitialTopic = () => {
+  const getInitialState = () => {
     const params = new URLSearchParams(window.location.search);
     const topicId = params.get("topic");
-    return topics.find((t) => t.id === topicId) ?? topics[0];
+    const found = topics.find((t) => t.id === topicId);
+    return { topic: found ?? topics[0], showLanding: !found };
   };
-const [selectedTopic, setSelectedTopic] = useState<Topic>(getInitialTopic);
-  const [customPool, setCustomPool] = useState<WordEntry[]>(topics[0].wordList);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const initial = getInitialState();
+  const [selectedTopic, setSelectedTopic] = useState<Topic>(initial.topic);
+  const [showLanding, setShowLanding] = useState(initial.showLanding);
+  const [customPool, setCustomPool] = useState<WordEntry[]>(initial.topic.wordList);
   const game = useGame(selectedTopic.wordList, selectedTopic.id);
   const tts = useTTS();
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
   const handleSelectTopic = (topic: Topic) => {
-      setSelectedTopic(topic);
-      setDropdownOpen(false);
-      window.history.pushState({}, "", `?topic=${topic.id}`);
-    };
+    setSelectedTopic(topic);
+    setShowLanding(false);
+    setCustomPool(topic.wordList);
+    window.history.pushState({}, "", `?topic=${topic.id}`);
+    game.restart(topic.wordList);
+  };
+
+  const handleGoToLanding = () => {
+    setShowLanding(true);
+    window.history.pushState({}, "", window.location.pathname);
+  };
 
   const handlePracticeWeak = (words: WordEntry[]) => {
     setCustomPool(words);
@@ -115,33 +115,16 @@ const [selectedTopic, setSelectedTopic] = useState<Topic>(getInitialTopic);
                 className="h-10 w-auto"
               />
             </a>
-            <div className="relative" ref={dropdownRef}>
+            <div>
               <h1
-                className="font-display text-lg font-bold text-foreground tracking-tight cursor-pointer flex items-center gap-1"
-                onClick={() => setDropdownOpen((o) => !o)}
+                className="font-display text-lg font-bold text-foreground tracking-tight flex items-center gap-1 cursor-pointer"
+                onClick={showLanding ? undefined : handleGoToLanding}
+                title={showLanding ? undefined : "Back to topics"}
               >
                 Englishpusher<span className="text-primary"> Trivia</span>
-                <span className="text-xs text-muted-foreground ml-1">▼</span>
               </h1>
-              <p className="text-xs text-muted-foreground">
-                {selectedTopic.name}
-              </p>
-              {dropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 z-50 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[200px]">
-                  {topics.map((topic) => (
-                    <button
-                      key={topic.id}
-                      onClick={() => handleSelectTopic(topic)}
-                      className={`w-full text-left px-4 py-2 text-sm transition-colors hover:bg-muted ${
-                        topic.id === selectedTopic.id
-                          ? "text-primary font-semibold bg-primary/10"
-                          : "text-foreground"
-                      }`}
-                    >
-                      {topic.name}
-                    </button>
-                  ))}
-                </div>
+              {!showLanding && (
+                <p className="text-xs text-muted-foreground">{selectedTopic.name}</p>
               )}
             </div>
           </div>
@@ -154,18 +137,16 @@ const [selectedTopic, setSelectedTopic] = useState<Topic>(getInitialTopic);
             >
               {tts.muted ? "🔇" : "🔊"}
             </button>
-            {!game.gameOver && (
-              <button
-                onClick={handlePlayAgain}
-                className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors text-lg"
-                aria-label="Restart game"
-                title="Restart"
-              >
-                🔄
-              </button>
-            )}
-            {!game.gameOver && (
+            {!showLanding && !game.gameOver && (
               <>
+                <button
+                  onClick={handlePlayAgain}
+                  className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors text-lg"
+                  aria-label="Restart game"
+                  title="Restart"
+                >
+                  🔄
+                </button>
                 {game.streak >= 3 && (
                   <span className="text-sm font-display font-bold text-primary animate-pulse">
                     🔥 {game.streak}
@@ -179,52 +160,72 @@ const [selectedTopic, setSelectedTopic] = useState<Topic>(getInitialTopic);
       </header>
 
       <main className="flex-1 flex items-center justify-center px-6 py-10">
-        <div key={selectedTopic.id} className="w-full max-w-2xl space-y-8">
-          {game.gameOver ? (
-            <EndScreen
-              score={game.score}
-              total={game.totalQuestions}
-              results={game.results}
-              onRestart={handlePlayAgain}
-              onPracticeWeak={handlePracticeWeak}
+        {showLanding ? (
+          <motion.div
+            key="landing"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="w-full max-w-2xl"
+          >
+            <MenuVertical
+              title="Choose a Topic"
+              subtitle="Pick a topic to start practising"
+              items={topics.map((t) => ({
+                label: t.name,
+                description: `${t.wordList.length} words`,
+                onClick: () => handleSelectTopic(t),
+              }))}
             />
-          ) : (
-            <>
-              <ProgressBar current={game.currentIndex} total={game.totalQuestions} />
-              {game.totalQuestions === 0 ? (
-                <div className="text-center text-muted-foreground">Loading...</div>
-              ) : (
-                <>
-                  {renderQuestion()}
-                  {(game.canGoPrev || game.canGoNext) && (
-                    <div className="flex justify-between items-center px-1">
-                      <button
-                        onClick={game.goPrev}
-                        disabled={!game.canGoPrev}
-                        className={game.canGoPrev
-                          ? "px-4 py-2 rounded-xl border-2 border-border text-sm font-semibold hover:border-primary hover:text-primary transition-all"
-                          : "px-4 py-2 rounded-xl border-2 border-transparent text-transparent cursor-default text-sm"
-                        }
-                      >
-                        ← Back
-                      </button>
-                      <button
-                        onClick={game.goNext}
-                        disabled={!game.canGoNext}
-                        className={game.canGoNext
-                          ? "px-4 py-2 rounded-xl border-2 border-primary bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-all"
-                          : "px-4 py-2 rounded-xl border-2 border-transparent text-transparent cursor-default text-sm"
-                        }
-                      >
-                        {game.isReviewing ? "Next →" : "Skip →"}
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </div>
+          </motion.div>
+        ) : (
+          <div key={selectedTopic.id} className="w-full max-w-2xl space-y-8">
+            {game.gameOver ? (
+              <EndScreen
+                score={game.score}
+                total={game.totalQuestions}
+                results={game.results}
+                onRestart={handlePlayAgain}
+                onPracticeWeak={handlePracticeWeak}
+              />
+            ) : (
+              <>
+                <ProgressBar current={game.currentIndex} total={game.totalQuestions} />
+                {game.totalQuestions === 0 ? (
+                  <div className="text-center text-muted-foreground">Loading...</div>
+                ) : (
+                  <>
+                    {renderQuestion()}
+                    {(game.canGoPrev || game.canGoNext) && (
+                      <div className="flex justify-between items-center px-1">
+                        <button
+                          onClick={game.goPrev}
+                          disabled={!game.canGoPrev}
+                          className={game.canGoPrev
+                            ? "px-4 py-2 rounded-xl border-2 border-border text-sm font-semibold hover:border-primary hover:text-primary transition-all"
+                            : "px-4 py-2 rounded-xl border-2 border-transparent text-transparent cursor-default text-sm"
+                          }
+                        >
+                          ← Back
+                        </button>
+                        <button
+                          onClick={game.goNext}
+                          disabled={!game.canGoNext}
+                          className={game.canGoNext
+                            ? "px-4 py-2 rounded-xl border-2 border-primary bg-primary/10 text-primary text-sm font-semibold hover:bg-primary hover:text-white transition-all"
+                            : "px-4 py-2 rounded-xl border-2 border-transparent text-transparent cursor-default text-sm"
+                          }
+                        >
+                          {game.isReviewing ? "Next →" : "Skip →"}
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        )}
       </main>
 
       <footer className="border-t border-border px-6 py-4 bg-card">
