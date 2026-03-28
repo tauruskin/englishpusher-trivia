@@ -262,14 +262,24 @@ const Index = () => {
       <footer className="border-t border-border px-6 py-4 bg-card">
         <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
           <p>Copyright © 2026 — Developed by Tetiana Pushkar</p>
-          <a
-            href="https://www.englishpusher.in.ua/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-primary transition-colors"
-          >
-            Visit Englishpusher.in.ua →
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://app.englishpusher.in.ua/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              ← All Apps
+            </a>
+            <a
+              href="https://www.englishpusher.in.ua/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              Visit Englishpusher.in.ua →
+            </a>
+          </div>
         </div>
       </footer>
     </div>
