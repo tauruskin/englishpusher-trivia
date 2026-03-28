@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { useGame } from "@/hooks/useGame";
 import { useTTS } from "@/hooks/useTTS";
@@ -27,6 +27,15 @@ const Index = () => {
   const [customPool, setCustomPool] = useState<WordEntry[]>(initial.topic.wordList);
   const game = useGame(selectedTopic.wordList, selectedTopic.id);
   const tts = useTTS();
+
+  const prevAnsweredRef = useRef(false);
+  useEffect(() => {
+    if (game.answered && !prevAnsweredRef.current && game.isCorrect !== null) {
+      if (game.isCorrect) tts.playCorrect();
+      else tts.playWrong();
+    }
+    prevAnsweredRef.current = game.answered;
+  }, [game.answered, game.isCorrect, tts.playCorrect, tts.playWrong]);
 
   const handleSelectTopic = (topic: Topic) => {
     setSelectedTopic(topic);
