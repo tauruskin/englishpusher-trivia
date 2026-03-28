@@ -23,6 +23,16 @@ const jobs: WordEntry[] = [
   { word: "repair cars", translation: "ремонтувати машини", example: "A mechanic's job is to ___ and make sure they are safe to drive." },
   { word: "grow fruit and vegetables", translation: "вирощувати фрукти та овочі", example: "A gardener can ___ as well as look after flowers and lawns." },
   { word: "provide natural food", translation: "забезпечувати натуральною їжею", example: "A gardener who grows organic produce can ___ for local families." },
+  { word: "career", translation: "кар'єра", example: "She worked hard for twenty years to build a successful ___ in medicine." },
+  { word: "part-time", translation: "часткова зайнятість", example: "Many students take a ___ job in a café to earn money while they study." },
+  { word: "wages", translation: "зарплата (погодинна)", example: "Factory workers receive their ___ at the end of each working week." },
+  { word: "full-time", translation: "повна зайнятість", example: "After finishing university, she got her first ___ job at a marketing agency." },
+  { word: "responsible for", translation: "відповідальний за", example: "The team leader is ___ checking that all reports are submitted on time." },
+  { word: "run a company", translation: "керувати компанією", example: "It takes great skill and experience to ___ with hundreds of employees." },
+  { word: "out of work", translation: "без роботи", example: "He was ___ for six months before he finally found a new position." },
+  { word: "profession", translation: "професія, спеціальність", example: "Teaching is a ___ that requires patience, creativity and strong communication." },
+  { word: "qualifications", translation: "кваліфікація, освіта", example: "You need the right ___ to apply for most professional jobs today." },
+  { word: "volunteer", translation: "доброволець, волонтер", example: "She decided to ___ at the local hospital during her summer holidays." },
 ];
 
 export default jobs;
