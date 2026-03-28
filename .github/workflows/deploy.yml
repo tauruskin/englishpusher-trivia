@@ -27,7 +27,7 @@ jobs:
         run: npm install
 
       - name: Set base path
-        run: echo "VITE_BASE_PATH=/englishpusher-trivia/" >> $GITHUB_ENV
+        run: echo "VITE_BASE_PATH=/" >> $GITHUB_ENV
 
       - name: Build
         run: npm run build
