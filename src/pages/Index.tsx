@@ -11,6 +11,7 @@ import TrueFalseCard from "@/components/TrueFalseCard";
 import MatchingCard from "@/components/MatchingCard";
 import EndScreen from "@/components/EndScreen";
 import MenuVertical from "@/components/ui/menu-vertical";
+import GameCharacter from "@/components/GameCharacter";
 
 const Index = () => {
   const getInitialState = () => {
@@ -166,17 +167,38 @@ const Index = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
-            className="w-full max-w-2xl"
+            className="w-full max-w-4xl flex items-center gap-10"
           >
-            <MenuVertical
-              title="Choose a Topic"
-              subtitle="Pick a topic to start practising"
-              items={topics.map((t) => ({
-                label: t.name,
-                description: `${t.wordList.length} words`,
-                onClick: () => handleSelectTopic(t),
-              }))}
-            />
+            {/* Teacher + speech bubble — desktop only */}
+            <div className="hidden md:flex flex-col items-center gap-4 flex-shrink-0">
+              <motion.div
+                className="relative bg-card border-2 border-border rounded-2xl px-5 py-3 shadow-sm max-w-[200px] text-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, type: "spring", stiffness: 260, damping: 20 }}
+              >
+                <p className="font-body text-sm text-foreground leading-snug">
+                  What shall we practise today? 😊
+                </p>
+                {/* Bubble tail pointing down */}
+                <div className="absolute left-1/2 -translate-x-1/2 -bottom-[10px] w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] border-t-border" />
+                <div className="absolute left-1/2 -translate-x-1/2 -bottom-[8px] w-0 h-0 border-l-[9px] border-l-transparent border-r-[9px] border-r-transparent border-t-[9px] border-t-card" />
+              </motion.div>
+              <GameCharacter pose="idle" className="w-[180px]" />
+            </div>
+
+            {/* Topic menu */}
+            <div className="flex-1">
+              <MenuVertical
+                title="Choose a Topic"
+                subtitle="Pick a topic to start practising"
+                items={topics.map((t) => ({
+                  label: t.name,
+                  description: `${t.wordList.length} words`,
+                  onClick: () => handleSelectTopic(t),
+                }))}
+              />
+            </div>
           </motion.div>
         ) : (
           <div key={selectedTopic.id} className="w-full max-w-2xl space-y-8">

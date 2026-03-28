@@ -23,7 +23,7 @@ const GameCharacter = ({ pose, className = "" }: GameCharacterProps) => {
 
   return (
     <div className={`hidden md:flex items-center justify-center ${className} ${animClass}`}>
-      <img src={src} alt="Teacher character" width={270} height={405} className="object-contain" />
+      <img src={src} alt="Teacher character" width={270} height={405} className="object-contain max-w-full" />
     </div>
   );
 };
