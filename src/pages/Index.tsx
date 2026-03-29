@@ -267,7 +267,7 @@ const Index = () => {
               href="https://app.englishpusher.in.ua/"
               className="hover:text-primary transition-colors"
             >
-              ← All Apps
+              ← Home
             </a>
             <a
               href="https://www.englishpusher.in.ua/"
