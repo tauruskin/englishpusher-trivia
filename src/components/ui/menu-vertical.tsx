@@ -75,17 +75,16 @@ export function MenuVertical({ items, title, subtitle }: MenuVerticalProps) {
             key={index}
             variants={itemVariants}
             whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
           >
             <button
               onClick={item.onClick}
-              className="w-full flex items-center justify-between p-5 rounded-2xl bg-card border-2 border-border hover:border-primary/60 text-left transition-colors group shadow-sm"
-              style={{
-                borderLeftColor: item.color ?? "#f07c1a",
-                borderLeftWidth: "4px",
-              }}
+              className="relative w-[98%] mx-auto flex items-center justify-between p-5 rounded-2xl bg-card border-2 border-border hover:border-primary/60 text-left transition-colors group shadow-sm"
             >
-              <div className="min-w-0">
+              <span
+                className="absolute left-0 inset-y-2 w-1 rounded-full"
+                style={{ backgroundColor: item.color ?? "#f07c1a" }}
+              />
+              <div className="min-w-0 ml-3">
                 <span className="font-display font-semibold text-foreground text-lg group-hover:text-primary transition-colors block">
                   {item.label}
                 </span>
