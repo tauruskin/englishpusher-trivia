@@ -196,7 +196,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, i
               onClick={() => !answered && onSubmit(option)}
               disabled={answered}
               style={{ animationDelay: `${i * 50}ms` }}
-              className={`w-full text-left px-5 py-3.5 rounded-lg border-2 font-body transition-all duration-200 ${getOptionStyle(option)}`}
+              className={`w-full text-left px-5 py-3.5 rounded-lg border-2 font-body text-base md:text-lg transition-all duration-200 ${getOptionStyle(option)}`}
             >
               {option}
             </button>

@@ -119,14 +119,14 @@ const TrueFalseCard = ({
           <button
             onClick={() => !answered && onSubmit("true")}
             disabled={answered}
-            className={`w-full px-5 py-4 rounded-lg border-2 font-display font-bold text-lg transition-all duration-200 ${getBtnStyle("true")}`}
+            className={`w-full px-5 py-4 rounded-lg border-2 font-display font-bold text-xl transition-all duration-200 ${getBtnStyle("true")}`}
           >
             ✅ True
           </button>
           <button
             onClick={() => !answered && onSubmit("false")}
             disabled={answered}
-            className={`w-full px-5 py-4 rounded-lg border-2 font-display font-bold text-lg transition-all duration-200 ${getBtnStyle("false")}`}
+            className={`w-full px-5 py-4 rounded-lg border-2 font-display font-bold text-xl transition-all duration-200 ${getBtnStyle("false")}`}
           >
             ❌ False
           </button>
