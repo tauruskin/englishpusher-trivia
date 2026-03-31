@@ -110,7 +110,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, i
 
       {/* Type label */}
       <div className="flex justify-center">
-        <span className="text-xs uppercase tracking-widest text-accent font-display font-semibold">
+        <span className="text-base uppercase tracking-widest text-accent font-display font-semibold">
           {isSentenceCompletion ? "Complete the Sentence" : question.type === "type-word" ? "Type the Word" : "Multiple Choice"}
         </span>
       </div>
@@ -196,7 +196,7 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, i
               onClick={() => !answered && onSubmit(option)}
               disabled={answered}
               style={{ animationDelay: `${i * 50}ms` }}
-              className={`w-full text-left px-5 py-3.5 rounded-lg border-2 font-body text-base md:text-lg transition-all duration-200 ${getOptionStyle(option)}`}
+              className={`w-full text-left px-5 py-3.5 rounded-lg border-2 font-body transition-all duration-200 ${getOptionStyle(option)}`}
             >
               {option}
             </button>
