@@ -99,11 +99,11 @@ const QuestionCard = ({ question, answered, selectedAnswer, isCorrect, streak, i
 
       {/* Streak badge */}
       {isReview ? (
-        <div className="absolute -top-1 -right-1 bg-muted text-muted-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl text-xs font-bold">
+        <div className="absolute -top-1 -right-1 !mt-0 bg-muted text-muted-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl text-xs font-bold">
           ← Reviewing
         </div>
       ) : streak >= 2 && (
-        <div className={`absolute -top-1 -right-1 bg-primary text-primary-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl font-display text-sm font-bold ${streak >= 3 ? 'animate-pulse' : ''}`}>
+        <div className={`absolute -top-1 -right-1 !mt-0 bg-primary text-primary-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl font-display text-sm font-bold ${streak >= 3 ? 'animate-pulse' : ''}`}>
           🔥 {streak} in a row!
         </div>
       )}

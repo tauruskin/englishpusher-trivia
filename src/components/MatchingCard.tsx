@@ -104,7 +104,7 @@ const MatchingCard = ({ question, transitioning, onSubmit, speak, isReview }: Ma
         }`}
       >
         {isReview && (
-          <div className="absolute -top-1 -right-1 bg-muted text-muted-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl text-xs font-bold">
+          <div className="absolute -top-1 -right-1 !mt-0 bg-muted text-muted-foreground px-3 py-1 rounded-bl-xl rounded-tr-2xl text-xs font-bold">
             ← Reviewing
           </div>
         )}
