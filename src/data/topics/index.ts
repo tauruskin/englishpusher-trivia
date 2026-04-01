@@ -4,6 +4,7 @@ import stativeVerbs from "./stative-verbs";
 import personalityAdjectives from "./personality-adjectives";
 import adverbsOfFrequency from "./adverbs-of-frequency";
 import jobs from "./jobs";
+import storyWords from "./story-words";
 
 export interface Topic {
   id: string;
@@ -17,6 +18,7 @@ const topics: Topic[] = [
   { id: "personality-adjectives", name: "Personality & Relationships", wordList: personalityAdjectives },
   { id: "adverbs-of-frequency", name: "Adverbs of Frequency", wordList: adverbsOfFrequency },
   { id: "jobs", name: "Jobs", wordList: jobs },
+  { id: "story-words", name: "Story Words", wordList: storyWords },
 ];
 
 export default topics;
