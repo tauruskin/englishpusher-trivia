@@ -26,10 +26,12 @@ const MatchingCard = ({ question, transitioning, onSubmit, speak, isReview }: Ma
   const words = question.words!;
 
   const shuffledTranslations = useMemo(() => shuffle(words.map((w) => w.translation)), [words]);
-  const [correctPairs, setCorrectPairs] = useState<Set<string>>(new Set());
+  const [correctPairs, setCorrectPairs] = useState<Set<string>>(() =>
+    isReview ? new Set(words.map((w) => w.word)) : new Set()
+  );
   const [selected, setSelected] = useState<string | null>(null);
   const [shaking, setShaking] = useState<{ word: string; translation: string } | null>(null);
-  const [allDone, setAllDone] = useState(false);
+  const [allDone, setAllDone] = useState(() => !!isReview);
 
   const checkMatch = useCallback(
     (englishWord: string, translation: string) => {
