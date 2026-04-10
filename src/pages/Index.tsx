@@ -116,7 +116,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b border-border px-6 py-4 bg-card shadow-sm">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <a href="https://www.englishpusher.in.ua/" target="_blank" rel="noopener noreferrer">
               <img
@@ -127,7 +127,7 @@ const Index = () => {
             </a>
             <div>
               <h1
-                className="font-display text-lg font-bold text-foreground tracking-tight flex items-center gap-1 cursor-pointer"
+                className="font-display text-xl font-bold text-foreground tracking-tight flex items-center gap-1 cursor-pointer"
                 onClick={showLanding ? undefined : handleGoToLanding}
                 title={showLanding ? undefined : "Back to topics"}
               >
@@ -141,27 +141,26 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={tts.toggleMute}
-              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors text-lg"
+              className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
               aria-label={tts.muted ? "Unmute pronunciation" : "Mute pronunciation"}
               title={tts.muted ? "Unmute" : "Mute"}
             >
-              {tts.muted ? "🔇" : "🔊"}
+              {tts.muted ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              )}
             </button>
             {!showLanding && !game.gameOver && (
               <>
                 <button
                   onClick={handlePlayAgain}
-                  className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors text-lg"
+                  className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
                   aria-label="Restart game"
                   title="Restart"
                 >
-                  🔄
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
                 </button>
-                {game.streak >= 3 && (
-                  <span className="text-sm font-display font-bold text-primary animate-pulse">
-                    🔥 {game.streak}
-                  </span>
-                )}
                 <ScoreBadge score={game.score} total={game.currentIndex + (game.answered ? 1 : 0)} />
               </>
             )}
@@ -260,22 +259,24 @@ const Index = () => {
       </main>
 
       <footer className="border-t border-border px-6 py-4 bg-card">
-        <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-          <p>Copyright © 2026 — Developed by Tetiana Pushkar</p>
-          <div className="flex items-center gap-4">
+        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-muted-foreground">
+          <p className="text-xs">Copyright © 2026 — Developed by Tetiana Pushkar</p>
+          <div className="flex items-center gap-2">
             <a
               href="https://app.englishpusher.in.ua/"
-              className="hover:text-primary transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-muted hover:text-foreground transition-colors font-medium text-xs"
             >
-              ← Home
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              Home
             </a>
             <a
               href="https://www.englishpusher.in.ua/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-primary transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-muted hover:text-foreground transition-colors font-medium text-xs"
             >
-              Visit Englishpusher.in.ua →
+              Visit Englishpusher.in.ua
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
             </a>
           </div>
         </div>
